@@ -1,0 +1,38 @@
+---
+title: "Random sample generation"
+output: html_notebook
+---
+
+Necessary packages
+
+```{r setup, include=FALSE}
+rm(list=ls())
+filefolder="C:/Users/test/Documents/Chris/Research/Sceloporus/Caudal Autotomy/Demography"
+knitr::opts_knit$set(root.dir = normalizePath(filefolder)) 
+#this is an option we have to use for RMD notebooks otherwise the wd is reset after each chunk is executed
+#setwd(filefolder) #this can be used instead for a regular rscript
+options(pkgType = "source")
+mypackages=c("xlsx","rJava","openxlsx") 
+neededpackages=mypackages[which(!is.element(el=mypackages,set=installed.packages()))]
+if(length(neededpackages>0)){
+    install.packages(neededpackages)
+}else{
+    warning("All packages already installed")
+}
+lapply(mypackages,function(x) library(x,character.only = T))
+```
+
+Create sample data files with 50 random rows.
+```{r}
+#create a function to do this eventually
+totalRows<-nrow(read.xlsx(xlsxFile = "Combined_2004_2017_.xlsx",sheet = 1))
+totalSample<-read.xlsx(xlsxFile = "Combined_2004_2017_.xlsx",sheet = 1,rows = c(1,sample(c(2:totalRows),size = 100,replace = F)))
+names(totalSample)[1]<-"rownumber" 
+str(totalSample)
+georgeSample<-totalSample[1:50,]
+chrisSample<-totalSample[51:100,]
+str(chrisSample)
+
+write.xlsx(georgeSample,"georgeSample.xlsx")
+write.xlsx(chrisSample,"chrisSample.xlsx")
+```
